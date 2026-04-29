@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Credencial ConfOps26</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #ffffff;
+      color: #151515;
+      min-height: 100vh;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 40% 60%;
+      align-items: center;
+      padding: 56px 72px;
+      gap: 48px;
+    }
+
+    .form {
+      max-width: 420px;
+    }
+
+    .block {
+      margin-bottom: 28px;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 22px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    h3 {
+      font-size: 24px;
+      margin-bottom: 14px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    p {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      height: 46px;
+      border: 1.5px solid #cfcfcf;
+      border-radius: 12px;
+      padding: 0 18px;
+      font-size: 18px;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: #151515;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .upload-btn,
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      border: 1.5px solid #151515;
+      background: #ffffff;
+      color: #151515;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 14px 26px;
+      cursor: pointer;
+    }
+
+    .upload-btn:hover {
+      background: #151515;
+      color: #ffffff;
+    }
+
+    .download-btn {
+      width: 100%;
+      margin-top: 20px;
+      background: #151515;
+      color: #ffffff;
+    }
+
+    .download-btn:hover {
+      background: #ff2d9b;
+      border-color: #ff2d9b;
+    }
+
+    .file-name {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #888;
+    }
+
+    .swatches {
+      display: flex;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .swatch {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .swatch.active {
+      outline: 3px solid #151515;
+      outline-offset: 3px;
+    }
+
+    .white { background: #e9e9e9; border-color: #cfcfcf; }
+    .pink { background: #ff2d9b; }
+    .black { background: #151515; }
+    .blackpink { background: linear-gradient(180deg, #151515 0%, #ff2d9b 100%); }
+
+    .preview-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .badge {
+      width: min(520px, 90vw);
+      aspect-ratio: 4 / 5;
+      position: relative;
+    }
+
+    .badge-bg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .photo {
+      position: absolute;
+      left: 29.2%;
+      top: 28.3%;
+      width: 41.7%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: none;
+    }
+
+    .name {
+      position: absolute;
+      top: 63.5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 86%;
+      text-align: center;
+      font-family: "Tiro Bangla", serif;
+      font-size: clamp(24px, 4.2vw, 38px);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #151515;
+    }
+
+    .badge.dark .name {
+      color: #f2f2f2;
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        grid-template-columns: 1fr;
+        padding: 32px 24px;
+      }
+
+      .form {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <section class="form">
+      <div class="block">
+        <h2>Datos personales:</h2>
+        <p>Ingresa los siguientes datos para poder identificarte:</p>
+        <input id="nameInput" type="text" placeholder="Nombre y apellido" maxlength="36">
+      </div>
+
+      <div class="block">
+        <h3>Imagen:</h3>
+        <p>Sube tu foto para reconocerte:</p>
+        <label class="upload-btn" for="photoInput">Subir</label>
+        <input id="photoInput" type="file" accept="image/*">
+        <div class="file-name" id="fileName"></div>
+      </div>
+
+      <div class="block">
+        <h3>Color:</h3>
+        <p>Elige el color que más te guste para personalizar tu tarjeta:</p>
+        <div class="swatches">
+          <button class="swatch white active" data-badge="badge-white.png" data-theme="light" aria-label="Blanco"></button>
+          <button class="swatch pink" data-badge="badge-pink.png" data-theme="light" aria-label="Rosa"></button>
+          <button class="swatch black" data-badge="badge-black.png" data-theme="dark" aria-label="Negro"></button>
+          <button class="swatch blackpink" data-badge="badge-blackpink.png" data-theme="dark" aria-label="Negro rosa"></button>
+        </div>
+      </div>
+
+      <button class="download-btn" id="downloadBtn">Descargar credencial</button>
+    </section>
+
+    <section class="preview-area">
+      <div class="badge" id="badge">
+        <img class="badge-bg" id="badgeBg" src="badge-white.png" alt="Credencial ConfOps26">
+        <div class="photo">
+          <img id="photoPreview" alt="Foto del participante">
+        </div>
+        <div class="name" id="namePreview">Nombre y apellido</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const nameInput = document.getElementById("nameInput");
+    const namePreview = document.getElementById("namePreview");
+    const photoInput = document.getElementById("photoInput");
+    const photoPreview = document.getElementById("photoPreview");
+    const fileName = document.getElementById("fileName");
+    const swatches = document.querySelectorAll(".swatch");
+    const badgeBg = document.getElementById("badgeBg");
+    const badge = document.getElementById("badge");
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    nameInput.addEventListener("input", () => {
+      const value = nameInput.value.trim();
+      namePreview.textContent = value || "Nombre y apellido";
+    });
+
+    photoInput.addEventListener("change", () => {
+      const file = photoInput.files[0];
+      if (!file) return;
+
+      fileName.textContent = file.name;
+      photoPreview.src = URL.createObjectURL(file);
+      photoPreview.style.display = "block";
+    });
+
+    swatches.forEach((swatch) => {
+      swatch.addEventListener("click", () => {
+        swatches.forEach((item) => item.classList.remove("active"));
+        swatch.classList.add("active");
+
+        badgeBg.src = swatch.dataset.badge;
+
+        if (swatch.dataset.theme === "dark") {
+          badge.classList.add("dark");
+        } else {
+          badge.classList.remove("dark");
+        }
+      });
+    });
+
+    downloadBtn.addEventListener("click", async () => {
+      const canvas = await html2canvas(badge, {
+        backgroundColor: null,
+        scale: 3,
+        useCORS: true
+      });
+
+      const link = document.createElement("a");
+      link.download = "credencial-confops26.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  </script>
+</body>
+</html>
